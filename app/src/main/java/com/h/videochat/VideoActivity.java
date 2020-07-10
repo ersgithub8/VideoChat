@@ -20,6 +20,7 @@ public class VideoActivity extends AppCompatActivity {
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler mRtcEventHandler;
 
+    String callid;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +43,7 @@ public class VideoActivity extends AppCompatActivity {
         };
         initializeAgoraEngine();
 
+        callid=getIntent().getStringExtra("callid");
     }
 
     private void initializeAgoraEngine() {
@@ -69,7 +71,7 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void joinChannel() {
-        mRtcEngine.joinChannel(null, "aye", "Extra Optional Data", new Random().nextInt(10000000)+1); // if you do not specify the uid, Agora will assign one.
+        mRtcEngine.joinChannel(null, callid, "Extra Optional Data", new Random().nextInt(10000000)+1); // if you do not specify the uid, Agora will assign one.
     }
 
     private void setupRemoteVideo(int uid) {

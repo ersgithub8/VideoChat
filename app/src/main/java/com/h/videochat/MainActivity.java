@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if(task.isSuccessful()){
 
+                        startActivity(new Intent(MainActivity.this,VideoActivity.class).putExtra("callid",currentuserid));
                     }else{
                         Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
                     }
@@ -220,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
 
-                            String id = dataSnapshot.child("id").getValue().toString();
+                            final String id = dataSnapshot.child("id").getValue().toString();
 
                             if (!id.equals(currentuserid)) {
                                 if (dataSnapshot.child("state").getValue().toString().equals("wait")) {
@@ -231,6 +232,7 @@ public class MainActivity extends AppCompatActivity {
 
                                                     if(task.isSuccessful()){
                                                         Toast.makeText(MainActivity.this, "jhfjh", Toast.LENGTH_SHORT).show();
+                                                        startActivity(new Intent(MainActivity.this,VideoActivity.class).putExtra("callid",id));
                                                     }else{
                                                         Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
                                                     }
