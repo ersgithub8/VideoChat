@@ -123,7 +123,7 @@ public class RegisterActivity extends AppCompatActivity {
                     params.put("coins",initialcoins);
 
 
-                    reference.child("User").setValue(params).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    reference.child("User").child(currentuserid[0]).setValue(params).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
 
