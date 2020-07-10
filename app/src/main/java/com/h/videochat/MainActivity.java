@@ -50,10 +50,6 @@ public class MainActivity extends AppCompatActivity {
     reference.child(currentuserid).addValueEventListener(new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-
-//            Toast.makeText(MainActivity.this, snapshot+"", Toast.LENGTH_SHORT).show();
-
             String coins=snapshot.child("coins").getValue().toString();
             usercoins.setText(coins);
         }
