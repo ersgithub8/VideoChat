@@ -62,10 +62,25 @@ public class MainActivity extends AppCompatActivity {
     male.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            createcall();
+//            createcalltomale();
+            searchmale();
+        }
+    });
+    female.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            createcalltofemale();
         }
     });
 
+    both.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+            createcalltoboth();
+        }
+    });
 
     reference.child("User").child(currentuserid).addValueEventListener(new ValueEventListener() {
         @Override
@@ -84,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
     });
     }
 
-    private void createcall() {
+    private void createcalltomale() {
         Map<String , String> params=new HashMap<String, String>();
         params.put("name",name);
         params.put("gender",gender);
@@ -114,6 +129,107 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
             });
+        }else{
+            Toast.makeText(this, "abc", Toast.LENGTH_SHORT).show();
         }
     }
+
+
+
+    private void createcalltofemale() {
+        Map<String , String> params=new HashMap<String, String>();
+        params.put("name",name);
+        params.put("gender",gender);
+        params.put("id",currentuserid);
+
+        if(gender.equals("")){
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+        }else if(gender.equals("male")){
+            reference.child("Calls").child("male_to_female").child(currentuserid).setValue(params).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+
+                    }else{
+                        Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }else if(gender.equals(female)){
+            reference.child("Calls").child("female_to_female").child(currentuserid).setValue(params).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+
+                    }else{
+                        Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }else{
+            Toast.makeText(this, "abc", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+
+    private void createcalltoboth() {
+        Map<String , String> params=new HashMap<String, String>();
+        params.put("name",name);
+        params.put("gender",gender);
+        params.put("id",currentuserid);
+
+
+            reference.child("Calls").child("both").child(currentuserid).setValue(params).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+
+                    }else{
+                        Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+
+    }
+
+
+    public  void searchmale(){
+        if(gender.equals("")){
+
+        }else if(gender.equals("male")){
+
+            reference.child("Calls").child("male_to_male").addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+//                    Toast.makeText(MainActivity.this, snapshot+"", Toast.LENGTH_SHORT).show();
+
+                    if(snapshot.getValue() == null){
+                        createcalltomale();
+                        return;
+                    }
+                    for (DataSnapshot dataSnapshot :snapshot.getChildren() ){
+
+
+                        String id=dataSnapshot.child("id").getValue().toString();
+
+                        Toast.makeText(MainActivity.this, id+"\n"+currentuserid, Toast.LENGTH_SHORT).show();
+                        if(!id.equals(currentuserid)){
+                            reference.child("Calls").child("male_to_male").child(id).removeValue();
+                            return;
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
+
+    }
+
 }
