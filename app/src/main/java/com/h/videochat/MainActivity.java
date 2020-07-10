@@ -12,6 +12,8 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -19,23 +21,35 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import de.hdodenhof.circleimageview.CircleImageView;
+
 public class MainActivity extends AppCompatActivity {
 
     ImageView logout;
+
+    String gender="",name="";
 
     TextView usercoins;
     FirebaseAuth auth;
     String currentuserid;
     DatabaseReference reference;
+    CircleImageView male,female,both;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
     auth=FirebaseAuth.getInstance();
+        male=findViewById(R.id.male);
+        female=findViewById(R.id.female);
+        both=findViewById(R.id.both);
     currentuserid=auth.getCurrentUser().getUid();
     logout=findViewById(R.id.logout);
     usercoins=findViewById(R.id.coins);
-    reference= FirebaseDatabase.getInstance().getReference().child("User");
+    reference= FirebaseDatabase.getInstance().getReference();
 
     logout.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -45,12 +59,21 @@ public class MainActivity extends AppCompatActivity {
             finishAffinity();
         }
     });
+    male.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            createcall();
+        }
+    });
 
 
-    reference.child(currentuserid).addValueEventListener(new ValueEventListener() {
+    reference.child("User").child(currentuserid).addValueEventListener(new ValueEventListener() {
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
             String coins=snapshot.child("coins").getValue().toString();
+            gender=snapshot.child("gender").getValue().toString();
+            name=snapshot.child("name").getValue().toString();
+
             usercoins.setText(coins);
         }
 
@@ -59,5 +82,38 @@ public class MainActivity extends AppCompatActivity {
 
         }
     });
+    }
+
+    private void createcall() {
+        Map<String , String> params=new HashMap<String, String>();
+        params.put("name",name);
+        params.put("gender",gender);
+        params.put("id",currentuserid);
+
+        if(gender.equals("")){
+            Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
+        }else if(gender.equals("male")){
+            reference.child("Calls").child("male_to_male").child(currentuserid).setValue(params).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+
+                    }else{
+                        Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }else if(gender.equals(female)){
+            reference.child("Calls").child("female_to_male").child(currentuserid).setValue(params).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+
+                    }else{
+                        Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            });
+        }
     }
 }
