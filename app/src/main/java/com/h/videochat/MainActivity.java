@@ -38,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference reference;
     CircleImageView male,female,both;
 
+    boolean callcheck=false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 //            createcalltomale();
+            callcheck=true;
             searchmale();
         }
     });
@@ -104,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
         params.put("name",name);
         params.put("gender",gender);
         params.put("id",currentuserid);
+        params.put("state","wait");
 
         if(gender.equals("")){
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -199,30 +203,57 @@ public class MainActivity extends AppCompatActivity {
 
         }else if(gender.equals("male")){
 
+
             reference.child("Calls").child("male_to_male").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
 
-//                    Toast.makeText(MainActivity.this, snapshot+"", Toast.LENGTH_SHORT).show();
+                    if (callcheck) {
 
-                    if(snapshot.getValue() == null){
-                        createcalltomale();
-                        return;
-                    }
-                    for (DataSnapshot dataSnapshot :snapshot.getChildren() ){
-
-
-                        String id=dataSnapshot.child("id").getValue().toString();
-
-                        Toast.makeText(MainActivity.this, id+"\n"+currentuserid, Toast.LENGTH_SHORT).show();
-                        if(!id.equals(currentuserid)){
-                            reference.child("Calls").child("male_to_male").child(id).removeValue();
+                        int count = Integer.parseInt(String.valueOf(snapshot.getChildrenCount()));
+                        if (snapshot.getValue() == null) {
+                            createcalltomale();
                             return;
                         }
+                        int i = 1;
+                        boolean check = false;
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
+
+                            String id = dataSnapshot.child("id").getValue().toString();
+
+                            if (!id.equals(currentuserid)) {
+                                if (dataSnapshot.child("state").getValue().toString().equals("wait")) {
+                                    reference.child("Calls").child("male_to_male").child(id).child("state").setValue("calling")
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+
+                                                    if(task.isSuccessful()){
+                                                        Toast.makeText(MainActivity.this, "jhfjh", Toast.LENGTH_SHORT).show();
+                                                    }else{
+                                                        Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+                                    return;
+                                }
+                            } else {
+                                check = true;
+                            }
+
+                            if (i == count) {
+                                if (check) {
+                                    Toast.makeText(MainActivity.this, "abc", Toast.LENGTH_SHORT).show();
+                                    createcalltomale();
+                                }
+                            }
+
+                            i++;
+                        }
                     }
+                    callcheck=false;
                 }
-
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
 
