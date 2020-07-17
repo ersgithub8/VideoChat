@@ -9,11 +9,32 @@
     <FrameLayout
         android:id="@+id/remote"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent"
+        android:background="@color/black"/>
     <FrameLayout
         android:id="@+id/ourvid"
         android:layout_margin="20dp"
         android:layout_alignParentRight="true"
         android:layout_width="100dp"
         android:layout_height="150dp"/>
+
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floatab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#f00"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="20dp"
+        android:layout_centerHorizontal="true"
+        android:src="@drawable/end"/>
+    <ImageView
+        android:id="@+id/switchcamera"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/switchcamera"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="25dp"
+        android:layout_marginRight="20dp"
+        android:layout_alignParentRight="true"/>
 </RelativeLayout>

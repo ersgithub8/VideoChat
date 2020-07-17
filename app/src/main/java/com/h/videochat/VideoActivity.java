@@ -3,9 +3,22 @@ package com.h.videochat;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.SurfaceView;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Random;
 
@@ -20,12 +33,22 @@ public class VideoActivity extends AppCompatActivity {
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler mRtcEventHandler;
 
-    String callid;
+    String callid,calltype;
+    DatabaseReference reference;
+    FloatingActionButton end;
+    ImageView switchcamera;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video);
+        end=findViewById(R.id.floatab);
+        switchcamera=findViewById(R.id.switchcamera);
+        callid=getIntent().getStringExtra("callid");
+        calltype=getIntent().getStringExtra("calltype");
+
+
         mRtcEventHandler = new IRtcEngineEventHandler() {
+
 
 
             @Override
@@ -43,7 +66,52 @@ public class VideoActivity extends AppCompatActivity {
         };
         initializeAgoraEngine();
 
-        callid=getIntent().getStringExtra("callid");
+
+        Toast.makeText(this, callid.substring(0,9), Toast.LENGTH_SHORT).show();
+        reference= FirebaseDatabase.getInstance().getReference().child("Calls").child(calltype).child(callid);
+
+
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                String calt=
+                snapshot.child("state").getValue().toString();
+
+                if(!(calt.equals("calling") || calt.equals("wait"))){
+                    onBackPressed();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        end.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                reference.child("state").setValue("End").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                   if(task.isSuccessful()){
+
+                   }else{
+
+                   }
+                    }
+                });
+            }
+        });
+
+        switchcamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mRtcEngine.switchCamera();
+            }
+        });
     }
 
     private void initializeAgoraEngine() {
@@ -67,7 +135,7 @@ public class VideoActivity extends AppCompatActivity {
         SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
         surfaceView.setZOrderMediaOverlay(true);
         container.addView(surfaceView);
-        mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_ADAPTIVE, 0));
+        mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_FIT, 0));
     }
 
     private void joinChannel() {
@@ -89,6 +157,14 @@ public class VideoActivity extends AppCompatActivity {
     }
 
     private void leaveChannel() {
+
         mRtcEngine.leaveChannel();
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        leaveChannel();
+        finish();
     }
 }
