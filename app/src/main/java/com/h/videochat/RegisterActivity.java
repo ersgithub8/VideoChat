@@ -56,7 +56,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         loading=new SweetAlertDialog(RegisterActivity.this,SweetAlertDialog.PROGRESS_TYPE);
         loading.setCancelable(false);
-        loading.setTitleText("Registering");
+        loading.setTitleText("Registering...");
 
         auth=FirebaseAuth.getInstance();
         reference= FirebaseDatabase.getInstance().getReference();

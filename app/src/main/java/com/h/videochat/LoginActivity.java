@@ -40,10 +40,9 @@ public class LoginActivity extends AppCompatActivity {
         submit=findViewById(R.id.submit);
         signup=findViewById(R.id.signup);
 
-
         loading=new SweetAlertDialog(LoginActivity.this,SweetAlertDialog.PROGRESS_TYPE);
         loading.setCancelable(false);
-        loading.setTitleText("Please wait you are loging in....");
+        loading.setTitleText("Please wait....");
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override

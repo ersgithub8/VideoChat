@@ -4,7 +4,17 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradient"
     tools:context=".LoginActivity">
+
+    <ImageView
+        android:layout_above="@id/temp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/icon"
+        />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/temp"
@@ -52,11 +62,13 @@
                 android:hint="Password"
                 android:inputType="textPassword"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="40dp"
                 android:textColor="@android:color/black"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:visibility="gone"
                 android:layout_marginTop="5dp"
                 android:id="@+id/forget_id"
                 android:layout_marginLeft="10dp"
@@ -86,7 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Don't Have an Account ? "
-            android:textColor="@color/black"
+            android:textColor="#FAEBD7"
             />
 
         <TextView
@@ -97,7 +109,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Create One "
-            android:textColor="@color/colorPrimaryDark"/>
+            android:textColor="@color/white"/>
 
     </LinearLayout>
 
@@ -113,8 +125,8 @@
         android:text="Login"
         android:paddingTop="2dp"
         android:paddingBottom="2dp"
-        android:paddingLeft="25dp"
-        android:paddingRight="25dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
         android:textSize="15sp"
         android:layout_marginTop="-25dp"
         />
