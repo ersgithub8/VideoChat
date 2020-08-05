@@ -13,29 +13,33 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/logout"
-        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
         android:layout_margin="10dp"/>
 
     <TextView
+
         android:id="@+id/name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Name"
+        android:elevation="4dp"
+        android:drawablePadding="10dp"
         android:textColor="@color/white"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
         android:layout_marginLeft="15dp"
         android:textSize="18sp"
         android:textStyle="bold"
         />
 
     <LinearLayout
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="15dp"
         android:layout_marginRight="15dp"
         android:layout_alignParentRight="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center"
+        android:elevation="4dp"
         >
         <ImageView
             android:layout_marginRight="5dp"
@@ -59,11 +63,49 @@
 
     <LinearLayout
         android:layout_centerInParent="true"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_horizontal">
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+
+
+            <LinearLayout
+                android:layout_marginRight="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                >
+                <ImageView
+                    android:layout_marginRight="5dp"
+                    android:layout_gravity="center"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/money"
+                    />
+                <TextView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gold"
+                    android:text="5"
+                    android:textSize="18sp"
+                    />
+
+            </LinearLayout>
+
 
         <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/male"
@@ -72,18 +114,82 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center"
-            android:src="@drawable/man"
+            android:src="@drawable/male"
+            android:elevation="4dp"
             />
+        </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
-        <de.hdodenhof.circleimageview.CircleImageView
+            <LinearLayout
+                android:layout_marginRight="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                >
+                <ImageView
+                    android:layout_marginRight="5dp"
+                    android:layout_gravity="center"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/money"
+                    />
+                <TextView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gold"
+                    android:text="5"
+                    android:textSize="18sp"
+                    />
+
+            </LinearLayout>
+            <de.hdodenhof.circleimageview.CircleImageView
             android:layout_margin="10dp"
             android:id="@+id/female"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center"
-            android:src="@drawable/women"
+            android:src="@drawable/female"
+                android:elevation="4dp"
             />
+        </RelativeLayout>
+        </LinearLayout>
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+
+            <LinearLayout
+                android:layout_marginRight="15dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                >
+                <ImageView
+                    android:layout_marginRight="5dp"
+                    android:layout_gravity="center"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/money"
+                    />
+                <TextView
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/gold"
+                    android:text="0"
+                    android:textSize="18sp"
+                    />
+
+            </LinearLayout>
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/both"
             android:layout_margin="10dp"
@@ -91,9 +197,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:gravity="center"
+            android:elevation="4dp"
             android:src="@drawable/both"
             />
-
+        </RelativeLayout>
     </LinearLayout>
 
 </RelativeLayout>

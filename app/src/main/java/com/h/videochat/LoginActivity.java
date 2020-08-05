@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         submit=findViewById(R.id.submit);
         signup=findViewById(R.id.signup);
 
+        submit.bringToFront();
         loading=new SweetAlertDialog(LoginActivity.this,SweetAlertDialog.PROGRESS_TYPE);
         loading.setCancelable(false);
         loading.setTitleText("Please wait....");

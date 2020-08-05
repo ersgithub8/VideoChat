@@ -63,11 +63,22 @@ public class VideoActivity extends AppCompatActivity {
             }
 
 
+            @Override
+            public void onUserOffline(final int uid, int reason) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+//                        mLogView.logI("User offline, uid: " + (uid & 0xFFFFFFFFL));
+//                        onRemoteUserLeft();
+                    endeverything();
+                    }
+                });
+            }
+
         };
         initializeAgoraEngine();
 
 
-        Toast.makeText(this, callid.substring(0,9), Toast.LENGTH_SHORT).show();
         reference= FirebaseDatabase.getInstance().getReference().child("Calls").child(calltype).child(callid);
 
 
@@ -79,7 +90,9 @@ public class VideoActivity extends AppCompatActivity {
                 snapshot.child("state").getValue().toString();
 
                 if(!(calt.equals("calling") || calt.equals("wait"))){
-                    onBackPressed();
+//                    onBackPressed();
+                    leaveChannel();
+                    finish();
                 }
             }
 
@@ -93,16 +106,7 @@ public class VideoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                reference.child("state").setValue("End").addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                   if(task.isSuccessful()){
-
-                   }else{
-
-                   }
-                    }
-                });
+                endeverything();
             }
         });
 
@@ -127,7 +131,7 @@ public class VideoActivity extends AppCompatActivity {
 
     private void setupVideoProfile() {
         mRtcEngine.enableVideo();
-        mRtcEngine.setVideoProfile(Constants.VIDEO_PROFILE_360P, false);
+        mRtcEngine.setVideoProfile(Constants.VIDEO_PROFILE_480P, false);
     }
 
     private void setupLocalVideo() {
@@ -135,8 +139,11 @@ public class VideoActivity extends AppCompatActivity {
         SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
         surfaceView.setZOrderMediaOverlay(true);
         container.addView(surfaceView);
-        mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_FIT, 0));
+        mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, 0));
     }
+
+
+
 
     private void joinChannel() {
         mRtcEngine.joinChannel(null, callid, "Extra Optional Data", new Random().nextInt(10000000)+1); // if you do not specify the uid, Agora will assign one.
@@ -151,7 +158,7 @@ public class VideoActivity extends AppCompatActivity {
 
         SurfaceView surfaceView = RtcEngine.CreateRendererView(getBaseContext());
         container.addView(surfaceView);
-        mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_FIT, uid));
+        mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceView, VideoCanvas.RENDER_MODE_HIDDEN, uid));
         surfaceView.setTag(uid);
 
     }
@@ -162,9 +169,23 @@ public class VideoActivity extends AppCompatActivity {
     }
 
 
+
+    public void endeverything(){
+        reference.child("state").setValue("End").addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+
+                }else{
+
+                }
+            }
+        });
+    }
+
     @Override
     public void onBackPressed() {
-        leaveChannel();
-        finish();
+//        leaveChannel();
+//        finish();
     }
 }

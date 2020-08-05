@@ -8,10 +8,10 @@
     tools:context=".LoginActivity">
 
     <ImageView
-        android:layout_above="@id/temp"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="10dp"
         android:layout_width="150dp"
+        android:layout_marginTop="40dp"
         android:layout_height="150dp"
         android:background="@drawable/icon"
         />
@@ -21,8 +21,8 @@
         android:background="@drawable/edit_border"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:layout_centerInParent="true"
         app:cardCornerRadius="20dp"
         >
@@ -39,12 +39,14 @@
             android:padding="10dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:textColorHint="@color/colorPrimary"
             >
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Email"
-                android:textColor="@android:color/black"/>
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@color/colorPrimary"/>
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -52,18 +54,22 @@
             android:paddingTop="5dp"
             android:paddingRight="10dp"
             android:paddingLeft="10dp"
+
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:passwordToggleEnabled="true">
+            app:passwordToggleEnabled="true"
+            app:passwordToggleTint="@color/colorPrimary"
+            android:textColorHint="@color/colorPrimary">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Password"
+                android:backgroundTint="@color/colorPrimary"
                 android:inputType="textPassword"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="40dp"
-                android:textColor="@android:color/black"/>
+                android:textColor="@color/colorPrimary"/>
 
         </com.google.android.material.textfield.TextInputLayout>
 

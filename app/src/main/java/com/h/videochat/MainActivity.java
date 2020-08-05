@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -32,12 +33,15 @@ public class MainActivity extends AppCompatActivity {
 
     String gender="",name="";
 
-    TextView usercoins;
+    TextView usercoins,nametv;
     FirebaseAuth auth;
     String currentuserid;
+    String coins;
+    int coinss;
     DatabaseReference reference;
     CircleImageView male,female,both;
 
+    SweetAlertDialog alertDialog;
     boolean callcheck=false;
 
     @Override
@@ -47,11 +51,44 @@ public class MainActivity extends AppCompatActivity {
     auth=FirebaseAuth.getInstance();
         male=findViewById(R.id.male);
         female=findViewById(R.id.female);
+        nametv=findViewById(R.id.name);
         both=findViewById(R.id.both);
     currentuserid=auth.getCurrentUser().getUid();
     logout=findViewById(R.id.logout);
     usercoins=findViewById(R.id.coins);
     reference= FirebaseDatabase.getInstance().getReference();
+
+    alertDialog=new SweetAlertDialog(this,SweetAlertDialog.PROGRESS_TYPE);
+    alertDialog.setTitleText("Loading");
+    alertDialog.setCancelable(false);
+    alertDialog.show();
+
+        reference.child("User").child(currentuserid).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                coins=snapshot.child("coins").getValue().toString();
+                coinss=Integer.parseInt(coins);
+                gender=snapshot.child("gender").getValue().toString();
+                name=snapshot.child("name").getValue().toString();
+
+                usercoins.setText(coins);
+
+                if(gender.equals("male")){
+                    nametv.setCompoundDrawablesRelativeWithIntrinsicBounds(getResources().getDrawable(R.drawable.malesign),null,null,null);
+                }else{
+                    nametv.setCompoundDrawablesRelativeWithIntrinsicBounds(getResources().getDrawable(R.drawable.femalesign),null,null,null);
+
+                }
+                nametv.setText(name);
+                alertDialog.dismiss();
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
 
     logout.setOnClickListener(new View.OnClickListener() {
         @Override
@@ -65,11 +102,17 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
 //            createcalltomale();
+
+
+            if(coinss > 5){
             callcheck=true;
             if(gender.equals("male")){
                 searchmale();
             }else{
                 searchmalefemale();
+            }
+            }else{
+                Toast.makeText(MainActivity.this, "You don't have sufficent coins to make this call", Toast.LENGTH_SHORT).show();
             }
 //            startActivity(new Intent(MainActivity.this,VideoActivity.class).putExtra("callid",currentuserid));
         }
@@ -79,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
 
 
+            if(coinss > 5){
 
 
             callcheck=true;
@@ -86,6 +130,9 @@ public class MainActivity extends AppCompatActivity {
                 searchmalefemale();
             }else {
                 searchfemale();
+            }
+            }else{
+                Toast.makeText(MainActivity.this, "You don't have sufficent coins to make this call", Toast.LENGTH_SHORT).show();
             }
         }
     });
@@ -99,21 +146,7 @@ public class MainActivity extends AppCompatActivity {
         }
     });
 
-    reference.child("User").child(currentuserid).addValueEventListener(new ValueEventListener() {
-        @Override
-        public void onDataChange(@NonNull DataSnapshot snapshot) {
-            String coins=snapshot.child("coins").getValue().toString();
-            gender=snapshot.child("gender").getValue().toString();
-            name=snapshot.child("name").getValue().toString();
 
-            usercoins.setText(coins);
-        }
-
-        @Override
-        public void onCancelled(@NonNull DatabaseError error) {
-
-        }
-    });
     }
 
     private void createcalltomale() {
@@ -122,6 +155,7 @@ public class MainActivity extends AppCompatActivity {
         params.put("gender",gender);
         params.put("id",currentuserid);
         params.put("state","wait");
+        params.put("coins",coins);
 
         if(gender.equals("")){
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -161,14 +195,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-
-
     private void createcalltofemale() {
         Map<String , String> params=new HashMap<String, String>();
         params.put("name",name);
         params.put("gender",gender);
         params.put("id",currentuserid);
         params.put("state","wait");
+        params.put("coins",coins);
 
         if(gender.equals("")){
             Toast.makeText(this, "Something went wrong", Toast.LENGTH_SHORT).show();
@@ -211,6 +244,7 @@ public class MainActivity extends AppCompatActivity {
         params.put("gender",gender);
         params.put("id",currentuserid);
         params.put("state","wait");
+        params.put("coins",coins);
 
         reference.child("Calls").child("malefemale").child(currentuserid).setValue(params).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
@@ -233,6 +267,7 @@ public class MainActivity extends AppCompatActivity {
         params.put("gender",gender);
         params.put("id",currentuserid);
         params.put("state","wait");
+        params.put("coins",coins);
 
 
         reference.child("Calls").child("both").child(currentuserid).setValue(params).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -274,11 +309,12 @@ public class MainActivity extends AppCompatActivity {
                         }
                         int i = 1;
                         boolean check = false;
-                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                        for (final DataSnapshot dataSnapshot : snapshot.getChildren()) {
 
 
                             final String id = dataSnapshot.child("id").getValue().toString();
-
+                            final String othercoins=dataSnapshot.child("coins").getValue().toString();
+                            final int othercoinss=Integer.parseInt(othercoins);
                             if (!id.equals(currentuserid)) {
                                 if (dataSnapshot.child("state").getValue().toString().equals("wait")) {
                                     reference.child("Calls").child("male_to_male").child(id).child("state").setValue("calling")
@@ -287,10 +323,37 @@ public class MainActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
 
                                                     if(task.isSuccessful()){
-                                                        Intent intent=new Intent(MainActivity.this,VideoActivity.class);
-                                                        intent.putExtra("callid",id);
-                                                        intent.putExtra("calltype","male_to_male");
-                                                        startActivity(intent);
+
+
+                                                        reference.child("User").child(currentuserid)
+                                                                .child("coins").setValue((coinss-5)+"")
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if(task.isSuccessful()){
+                                                                            reference.child("User").child(id)
+                                                                                    .child("coins").setValue((othercoinss-5)+"")
+                                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                                            if(task.isSuccessful()){
+                                                                                                Intent intent=new Intent(MainActivity.this,VideoActivity.class);
+                                                                                                intent.putExtra("callid",id);
+                                                                                                intent.putExtra("calltype","male_to_male");
+                                                                                                startActivity(intent);
+                                                                                            }else{
+
+                                                                                            }
+                                                                                        }
+                                                                                    });
+                                                                        }else{
+
+                                                                        }
+                                                                    }
+                                                                });
+
+
+
                                                     }else{
                                                         Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
                                                     }
@@ -350,7 +413,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                             final String id = dataSnapshot.child("id").getValue().toString();
-
+                            final String  othercoins=dataSnapshot.child("coins").getValue().toString();
+                            final  int othercoinss=Integer.parseInt(othercoins);
                             if (!id.equals(currentuserid)) {
                                 if (dataSnapshot.child("state").getValue().toString().equals("wait")) {
                                     reference.child("Calls").child("female_to_female").child(id).child("state").setValue("calling")
@@ -359,10 +423,37 @@ public class MainActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
 
                                                     if(task.isSuccessful()){
-                                                        Intent intent=new Intent(MainActivity.this,VideoActivity.class);
-                                                        intent.putExtra("callid",id);
-                                                        intent.putExtra("calltype","female_to_female");
-                                                        startActivity(intent);
+
+
+                                                        reference.child("User").child(currentuserid)
+                                                                .child("coins").setValue((coinss-5)+"")
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                   if(task.isSuccessful()){
+                                                                       reference.child("User").child(id)
+                                                                               .child("coins").setValue((othercoinss-5)+"")
+                                                                               .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                   @Override
+                                                                                   public void onComplete(@NonNull Task<Void> task) {
+                                                                                  if(task.isSuccessful()){
+                                                                                      Intent intent=new Intent(MainActivity.this,VideoActivity.class);
+                                                                                      intent.putExtra("callid",id);
+                                                                                      intent.putExtra("calltype","female_to_female");
+                                                                                      startActivity(intent);
+                                                                                  }else{
+
+                                                                                  }
+                                                                                   }
+                                                                               });
+                                                                   }else{
+
+                                                                   }
+                                                                    }
+                                                                });
+
+
+
                                                     }else{
                                                         Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
                                                     }
@@ -490,7 +581,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                             final String id = dataSnapshot.child("id").getValue().toString();
-
+                            final String  othercoins=dataSnapshot.child("coins").getValue().toString();
+                            final  int othercoinss=Integer.parseInt(othercoins);
                             if (!id.equals(currentuserid)) {
                                 if (dataSnapshot.child("state").getValue().toString().equals("wait")
                                         &&
@@ -501,10 +593,37 @@ public class MainActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
 
                                                     if(task.isSuccessful()){
-                                                        Intent intent=new Intent(MainActivity.this,VideoActivity.class);
-                                                        intent.putExtra("callid",id);
-                                                        intent.putExtra("calltype","malefemale");
-                                                        startActivity(intent);
+
+
+
+                                                        reference.child("User").child(currentuserid)
+                                                                .child("coins").setValue((coinss-5)+"")
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if(task.isSuccessful()){
+                                                                            reference.child("User").child(id)
+                                                                                    .child("coins").setValue((othercoinss-5)+"")
+                                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                                            if(task.isSuccessful()){
+                                                                                                Intent intent=new Intent(MainActivity.this,VideoActivity.class);
+                                                                                                intent.putExtra("callid",id);
+                                                                                                intent.putExtra("calltype","malefemale");
+                                                                                                startActivity(intent);
+                                                                                            }else{
+
+                                                                                            }
+                                                                                        }
+                                                                                    });
+                                                                        }else{
+
+                                                                        }
+                                                                    }
+                                                                });
+
+
                                                     }else{
                                                         Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
                                                     }
@@ -559,7 +678,8 @@ public class MainActivity extends AppCompatActivity {
 
 
                             final String id = dataSnapshot.child("id").getValue().toString();
-
+                            final String  othercoins=dataSnapshot.child("coins").getValue().toString();
+                            final  int othercoinss=Integer.parseInt(othercoins);
                             if (!id.equals(currentuserid)) {
                                 if (dataSnapshot.child("state").getValue().toString().equals("wait")
                                         &&
@@ -570,10 +690,32 @@ public class MainActivity extends AppCompatActivity {
                                                 public void onComplete(@NonNull Task<Void> task) {
 
                                                     if(task.isSuccessful()){
-                                                        Intent intent=new Intent(MainActivity.this,VideoActivity.class);
-                                                        intent.putExtra("callid",id);
-                                                        intent.putExtra("calltype","malefemale");
-                                                        startActivity(intent);
+                                                        reference.child("User").child(currentuserid)
+                                                                .child("coins").setValue((coinss-5)+"")
+                                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                    @Override
+                                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                                        if(task.isSuccessful()){
+                                                                            reference.child("User").child(id)
+                                                                                    .child("coins").setValue((othercoinss-5)+"")
+                                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                                                        @Override
+                                                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                                                            if(task.isSuccessful()){
+                                                                                                Intent intent=new Intent(MainActivity.this,VideoActivity.class);
+                                                                                                intent.putExtra("callid",id);
+                                                                                                intent.putExtra("calltype","malefemale");
+                                                                                                startActivity(intent);
+                                                                                            }else{
+
+                                                                                            }
+                                                                                        }
+                                                                                    });
+                                                                        }else{
+
+                                                                        }
+                                                                    }
+                                                                });
                                                     }else{
                                                         Toast.makeText(MainActivity.this, task.getException()+"", Toast.LENGTH_SHORT).show();
                                                     }
