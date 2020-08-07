@@ -29,7 +29,7 @@ public class RegisterActivity extends AppCompatActivity {
     TextInputLayout email,password,name;
     Button submit;
     CircleImageView male,female;
-    String gender="",initialcoins="100";
+    String gender="male",initialcoins="100";
 
 
     FirebaseAuth auth;

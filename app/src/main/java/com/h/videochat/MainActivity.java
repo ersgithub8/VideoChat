@@ -20,6 +20,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.skydoves.elasticviews.ElasticImageView;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     String coins;
     int coinss;
     DatabaseReference reference;
-    CircleImageView male,female,both;
+    ElasticImageView male,female,both;
 
     SweetAlertDialog alertDialog;
     boolean callcheck=false;

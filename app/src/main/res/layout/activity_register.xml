@@ -33,7 +33,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginRight="20dp"
                     android:gravity="center"
-                    android:src="@drawable/male_unselect"
+                    android:src="@drawable/male_select"
                     app:civ_border_color="@color/light_black"
                     app:civ_border_width="0.5dp" />
 
